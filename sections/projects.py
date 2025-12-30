@@ -54,8 +54,6 @@ def projects():
                     </div>
                     """, unsafe_allow_html=True)
 
-            # Thêm một info box nhỏ để nhắc về tính năng phụ (Safety)
-            st.info("🛡️ **Integrated Feature:** Dual-use capability for Industrial Safety & Collision Warning zones.")
 
         with col_b2:
             st.markdown("""
