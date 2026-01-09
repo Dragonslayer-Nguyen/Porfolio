@@ -116,15 +116,15 @@ def certificate():
         cat_col, view_col = st.columns([1, 2])
 
         cert_groups = {
-            "🤖 AI & Machine Learning": ["assets/cousera/Deep_Learning.pdf", "assets/cousera/Natural_Language_Processing.pdf",
-                                        "assets/cousera/IBM_Introduction_To_Machine_Learning.pdf", "assets/cousera/IBM_Applied_AI.pdf",
-                                        "assets/cousera/IBM_AI_Developer.pdf"],
-            "📊 Data Science & Big Data": ["assets/cousera/IBM_Data_Science.pdf", "assets/cousera/Applied_Data_Science_with_R.pdf",
-                                          "assets/cousera/Big_Data.pdf"],
-            "💻 Software Development": ["assets/cousera/IBM_Full_Stack_Software_Developer.pdf",
-                                       "assets/cousera/Software_Development_Lifecycle.pdf"],
-            "📚 Academic & Management": ["assets/cousera/Academic_English_Writing.pdf",
-                                        "assets/cousera/Project_Management_Principles_and_Practices.pdf"]
+            "🤖 AI & Machine Learning": ["assets//cousera//Deep_Learning.pdf", "assets//cousera//Natural_Language_Processing.pdf",
+                                        "assets//cousera//IBM_Introduction_To_Machine_Learning.pdf", "assets//cousera//IBM_Applied_AI.pdf",
+                                        "assets//cousera//IBM_AI_Developer.pdf"],
+            "📊 Data Science & Big Data": ["assets//cousera//IBM_Data_Science.pdf", "assets//cousera//Applied_Data_Science.pdf",
+                                          "assets//cousera//Big_Data.pdf"],
+            "💻 Software Development": ["assets//cousera//IBM_Full_Stack_Software_Developer.pdf",
+                                       "assets//cousera//Software_Development_Lifecycle.pdf"],
+            "📚 Academic & Management": ["assets//cousera//Academic_English_Writing.pdf",
+                                        "assets//cousera//Project_Management_Principles_and_Practices.pdf"]
         }
 
         with cat_col:
