@@ -3,16 +3,15 @@ import base64
 
 
 def show_pdf(file_path):
-    """Hiển thị PDF bằng PDF.js - Chống chặn hiển thị trên Chrome/Edge khi deploy"""
+    """Hiển thị PDF Full width, tự động co giãn và nét"""
     try:
         with open(file_path, "rb") as f:
             pdf_data = f.read()
             pdf64 = base64.b64encode(pdf_data).decode("utf-8")
 
-        # Sử dụng PDF.js để vẽ lên Canvas giúp tránh lỗi iframe Base64
         pdf_viewer_html = f"""
-        <div id="pdf-viewer-container" style="width:100%; height:800px; overflow-y: auto; background-color: #525659; border-radius: 12px; padding: 20px 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-            <div id="canvas-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 20px;"></div>
+        <div id="pdf-viewer-container" style="width:100%; height:850px; overflow-y: auto; background-color: #525659; border-radius: 12px; padding: 10px 0;">
+            <div id="canvas-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;"></div>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
@@ -24,15 +23,24 @@ def show_pdf(file_path):
             const loadingTask = pdfjsLib.getDocument({{data: pdfData}});
             loadingTask.promise.then(function(pdf) {{
                 const wrapper = document.getElementById('canvas-wrapper');
-                
+                const container = document.getElementById('pdf-viewer-container');
+
                 for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {{
                     pdf.getPage(pageNum).then(function(page) {{
-                        const viewport = page.getViewport({{scale: 1.5}});
+                        // Lấy chiều rộng container để tính toán scale tự động
+                        const containerWidth = container.clientWidth - 40; // trừ padding
+                        const unscaledViewport = page.getViewport({{scale: 1}});
+                        const scale = containerWidth / unscaledViewport.width;
+
+                        const viewport = page.getViewport({{scale: scale}});
                         const canvas = document.createElement('canvas');
-                        canvas.style.boxShadow = "0 8px 16px rgba(0,0,0,0.3)";
+
+                        // Style cho canvas để trông giống tờ giấy
+                        canvas.style.boxShadow = "0 8px 24px rgba(0,0,0,0.4)";
                         canvas.style.backgroundColor = "white";
-                        canvas.style.borderRadius = "4px";
-                        
+                        canvas.style.maxWidth = "95%"; 
+                        canvas.style.height = "auto";
+
                         const context = canvas.getContext('2d');
                         canvas.height = viewport.height;
                         canvas.width = viewport.width;
@@ -47,13 +55,13 @@ def show_pdf(file_path):
             }});
         </script>
         <style>
-            #pdf-viewer-container::-webkit-scrollbar {{ width: 8px; }}
+            #pdf-viewer-container::-webkit-scrollbar {{ width: 10px; }}
             #pdf-viewer-container::-webkit-scrollbar-track {{ background: #333; }}
-            #pdf-viewer-container::-webkit-scrollbar-thumb {{ background: #888; border-radius: 4px; }}
+            #pdf-viewer-container::-webkit-scrollbar-thumb {{ background: #888; border-radius: 5px; border: 2px solid #333; }}
         </style>
         """
-        # Sử dụng height lớn hơn height của container một chút để tránh scroll thừa
-        st.components.v1.html(pdf_viewer_html, height=820)
+        # Tăng height lên 900 để chứa được toàn bộ container và lề
+        st.components.v1.html(pdf_viewer_html, height=880)
 
     except FileNotFoundError:
         st.error(f"⚠️ Không tìm thấy file tại: {file_path}")
