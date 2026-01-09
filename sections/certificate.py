@@ -148,7 +148,7 @@ def certificate():
             "💻 Software Development": ["assets//cousera//IBM_Full_Stack_Software_Developer.pdf",
                                        "assets//cousera//Software_Development_Lifecycle.pdf"],
             "📚 Academic & Management": ["assets//cousera//Academic_English_Writing.pdf",
-                                        "assets//cousera//Project_Management_Principles_and_Practices.pdf"]
+                                        "assets//cousera//Project_Management.pdf"]
         }
 
         with cat_col:
