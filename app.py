@@ -3,6 +3,7 @@ from sections.about import about
 from sections.projects import projects
 from sections.skills import skills
 from sections.contact import contact
+from sections.certificate import certificate
 
 # Cấu hình trang với tiêu đề tiếng Anh chuyên nghiệp
 st.set_page_config(
@@ -18,7 +19,7 @@ st.sidebar.markdown("---") # Đường kẻ phân cách cho sạch sẽ
 
 page = st.sidebar.radio(
     "Go to:",
-    ["About Me", "Featured Projects", "Technical Skills", "Contact & Network"]
+    ["About Me", "Featured Projects", "Technical Skills","Credentials & Recognitions", "Contact & Network"]
 )
 
 # Logic điều hướng
@@ -28,5 +29,7 @@ elif page == "Featured Projects":
     projects()
 elif page == "Technical Skills":
     skills()
+elif page == "Credentials & Recognitions":
+    certificate()
 else:
     contact()
