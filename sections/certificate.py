@@ -3,20 +3,60 @@ import base64
 
 
 def show_pdf(file_path):
-    """Hiển thị PDF chuyên nghiệp hơn với khung bo góc và đổ bóng"""
+    """Hiển thị PDF bằng PDF.js - Chống chặn hiển thị trên Chrome/Edge khi deploy"""
     try:
         with open(file_path, "rb") as f:
-            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+            pdf_data = f.read()
+            pdf64 = base64.b64encode(pdf_data).decode("utf-8")
 
-        # Thêm CSS để khung PDF trông mượt mà hơn
-        pdf_display = f"""
-            <div style="border: 1px solid #ddd; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                <iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="700" type="application/pdf" style="border:none;"></iframe>
-            </div>
+        # Sử dụng PDF.js để vẽ lên Canvas giúp tránh lỗi iframe Base64
+        pdf_viewer_html = f"""
+        <div id="pdf-viewer-container" style="width:100%; height:800px; overflow-y: auto; background-color: #525659; border-radius: 12px; padding: 20px 0; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+            <div id="canvas-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 20px;"></div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
+        <script>
+            const pdfData = atob("{pdf64}");
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
+
+            const loadingTask = pdfjsLib.getDocument({{data: pdfData}});
+            loadingTask.promise.then(function(pdf) {{
+                const wrapper = document.getElementById('canvas-wrapper');
+                
+                for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {{
+                    pdf.getPage(pageNum).then(function(page) {{
+                        const viewport = page.getViewport({{scale: 1.5}});
+                        const canvas = document.createElement('canvas');
+                        canvas.style.boxShadow = "0 8px 16px rgba(0,0,0,0.3)";
+                        canvas.style.backgroundColor = "white";
+                        canvas.style.borderRadius = "4px";
+                        
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        wrapper.appendChild(canvas);
+
+                        page.render({{
+                            canvasContext: context,
+                            viewport: viewport
+                        }});
+                    }});
+                }}
+            }});
+        </script>
+        <style>
+            #pdf-viewer-container::-webkit-scrollbar {{ width: 8px; }}
+            #pdf-viewer-container::-webkit-scrollbar-track {{ background: #333; }}
+            #pdf-viewer-container::-webkit-scrollbar-thumb {{ background: #888; border-radius: 4px; }}
+        </style>
         """
-        st.markdown(pdf_display, unsafe_allow_html=True)
+        # Sử dụng height lớn hơn height của container một chút để tránh scroll thừa
+        st.components.v1.html(pdf_viewer_html, height=820)
+
     except FileNotFoundError:
-        st.error(f"⚠️ File not found: {file_path}")
+        st.error(f"⚠️ Không tìm thấy file tại: {file_path}")
 
 
 def certificate():
