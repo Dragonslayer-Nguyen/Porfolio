@@ -3,15 +3,25 @@ import base64
 
 
 def show_pdf(file_path):
-    """Hiển thị PDF Full width, tự động co giãn và nét"""
     try:
         with open(file_path, "rb") as f:
             pdf_data = f.read()
             pdf64 = base64.b64encode(pdf_data).decode("utf-8")
 
         pdf_viewer_html = f"""
-        <div id="pdf-viewer-container" style="width:100%; height:850px; overflow-y: auto; background-color: #525659; border-radius: 12px; padding: 10px 0;">
-            <div id="canvas-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;"></div>
+        <div id="pdf-control-bar" style="display: flex; gap: 10px; background: #323639; padding: 10px; border-radius: 12px 12px 0 0; justify-content: center; align-items: center; border-bottom: 1px solid #444; position: sticky; top: 0; z-index: 10;">
+            <button onclick="changeZoom(-0.1)" style="cursor:pointer; padding: 6px 12px; border-radius: 4px; border:none; background:#444; color:white;">➖ Zoom Out</button>
+            <span id="zoom-val" style="color:white; font-family:sans-serif; font-size:14px; min-width:50px; text-align:center;">120%</span>
+            <button onclick="changeZoom(0.1)" style="cursor:pointer; padding: 6px 12px; border-radius: 4px; border:none; background:#444; color:white;">➕ Zoom In</button>
+
+            <div style="width: 2px; height: 20px; background: #555; margin: 0 10px;"></div>
+
+            <button onclick="rotatePDF()" style="cursor:pointer; padding: 6px 12px; border-radius: 4px; border:none; background:#059669; color:white;">🔄 Rotate 90°</button>
+            <button onclick="resetView()" style="cursor:pointer; padding: 6px 12px; border-radius: 4px; border:none; background:#1E3A8A; color:white;">Reset</button>
+        </div>
+
+        <div id="pdf-viewer-container" style="width:100%; height:800px; overflow-y: auto; background-color: #525659; border-radius: 0 0 12px 12px; padding: 20px 0;">
+            <div id="canvas-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 20px;"></div>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
@@ -20,48 +30,62 @@ def show_pdf(file_path):
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
 
-            const loadingTask = pdfjsLib.getDocument({{data: pdfData}});
-            loadingTask.promise.then(function(pdf) {{
+            let pdfDoc = null;
+            let currentScale = 1.2; 
+            let currentRotation = 0;
+
+            function renderPages() {{
                 const wrapper = document.getElementById('canvas-wrapper');
-                const container = document.getElementById('pdf-viewer-container');
+                wrapper.innerHTML = ''; 
 
-                for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {{
-                    pdf.getPage(pageNum).then(function(page) {{
-                        // Lấy chiều rộng container để tính toán scale tự động
-                        const containerWidth = container.clientWidth - 40; // trừ padding
-                        const unscaledViewport = page.getViewport({{scale: 1}});
-                        const scale = containerWidth / unscaledViewport.width;
+                for(let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {{
+                    pdfDoc.getPage(pageNum).then(function(page) {{
+                        // Áp dụng cả scale và rotation vào viewport
+                        const viewport = page.getViewport({{ 
+                            scale: currentScale, 
+                            rotation: currentRotation 
+                        }});
 
-                        const viewport = page.getViewport({{scale: scale}});
                         const canvas = document.createElement('canvas');
-
-                        // Style cho canvas để trông giống tờ giấy
-                        canvas.style.boxShadow = "0 8px 24px rgba(0,0,0,0.4)";
+                        canvas.style.boxShadow = "0 8px 16px rgba(0,0,0,0.3)";
                         canvas.style.backgroundColor = "white";
-                        canvas.style.maxWidth = "95%"; 
-                        canvas.style.height = "auto";
+                        canvas.style.transition = "transform 0.2s ease-in-out";
 
                         const context = canvas.getContext('2d');
                         canvas.height = viewport.height;
                         canvas.width = viewport.width;
                         wrapper.appendChild(canvas);
 
-                        page.render({{
-                            canvasContext: context,
-                            viewport: viewport
-                        }});
+                        page.render({{canvasContext: context, viewport: viewport}});
                     }});
                 }}
+                document.getElementById('zoom-val').innerText = Math.round(currentScale * 100) + "%";
+            }}
+
+            window.changeZoom = function(delta) {{
+                currentScale = Math.min(Math.max(currentScale + delta, 0.5), 3.0);
+                renderPages();
+            }}
+
+            window.rotatePDF = function() {{
+                currentRotation = (currentRotation + 90) % 360;
+                renderPages();
+            }}
+
+            window.resetView = function() {{
+                currentScale = 1.2;
+                currentRotation = 0;
+                renderPages();
+            }}
+
+            const loadingTask = pdfjsLib.getDocument({{data: pdfData}});
+            loadingTask.promise.then(function(pdf) {{
+                pdfDoc = pdf;
+                renderPages();
             }});
         </script>
-        <style>
-            #pdf-viewer-container::-webkit-scrollbar {{ width: 10px; }}
-            #pdf-viewer-container::-webkit-scrollbar-track {{ background: #333; }}
-            #pdf-viewer-container::-webkit-scrollbar-thumb {{ background: #888; border-radius: 5px; border: 2px solid #333; }}
-        </style>
         """
-        # Tăng height lên 900 để chứa được toàn bộ container và lề
-        st.components.v1.html(pdf_viewer_html, height=880)
+        st.components.v1.html(pdf_viewer_html, height=920)
 
     except FileNotFoundError:
         st.error(f"⚠️ Không tìm thấy file tại: {file_path}")
@@ -130,7 +154,7 @@ def certificate():
         with cat_col:
             category = st.radio("Choose Category", list(cert_groups.keys()))
             files = cert_groups[category]
-            display_names = {f: f.replace("assets/cousera/", "").replace(".pdf", "").replace("_", " ") for f in files}
+            display_names = {f: f.replace("assets//cousera//", "").replace(".pdf", "").replace("_", " ") for f in files}
             selected_path = st.selectbox("Select Certificate", options=files, format_func=lambda x: display_names[x])
 
         with view_col:
