@@ -127,7 +127,7 @@ def certificate():
                     <h4>Bachelor of Science</h4>
                     <p><b>Major:</b> Artificial Intelligence</p>
                     <p><b>Institution:</b> FPT University</p>
-                    <p><b>Period:</b> 2018 - 2022</p>
+                    <p><b>Period:</b> 2022 - 2024</p>
                 </div>
             """, unsafe_allow_html=True)
         with c2:
