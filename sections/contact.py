@@ -1,6 +1,5 @@
 import streamlit as st
 
-
 def contact():
     # Căn giữa tiêu đề
     st.markdown("<h1 style='text-align: center;'>🤝 Get In Touch</h1>", unsafe_allow_html=True)
@@ -17,12 +16,12 @@ def contact():
         .contact-card {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
-            padding: 30px;
+            padding: 25px 20px;
             border-radius: 15px;
             text-align: center;
             transition: all 0.3s ease;
             width: 100%;
-            min-height: 180px;
+            min-height: 160px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -34,30 +33,31 @@ def contact():
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
         }
         .contact-icon {
-            font-size: 35px;
-            margin-bottom: 15px;
+            font-size: 30px;
+            margin-bottom: 12px;
         }
         .contact-label {
             color: #94a3b8;
-            font-size: 0.8em;
+            font-size: 0.75em;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .contact-link {
             color: #1e293b;
             font-weight: 700;
             text-decoration: none;
-            font-size: 1.1em;
+            font-size: 1rem;
+            word-break: break-all;
         }
         .location-section {
             text-align: center;
-            margin-top: 80px;
+            margin-top: 60px;
             padding: 20px;
             border-top: 1px solid #f1f5f9;
         }
         .location-text {
-            font-size: 1.5rem; /* Tăng kích thước font chữ vị trí */
+            font-size: 1.5rem;
             font-weight: 800;
             color: #1e293b;
             letter-spacing: -0.02em;
@@ -71,10 +71,10 @@ def contact():
         </style>
     """, unsafe_allow_html=True)
 
-    # Bố cục 2 cột chính
-    _, mid_col1, mid_col2, _ = st.columns([1, 2, 2, 1])
+    # Bố cục 3 cột cân đối
+    col1, col2, col3 = st.columns(3, gap="medium")
 
-    with mid_col1:
+    with col1:
         st.markdown("""
             <div class="contact-card">
                 <div class="contact-icon">✉️</div>
@@ -83,7 +83,7 @@ def contact():
             </div>
         """, unsafe_allow_html=True)
 
-    with mid_col2:
+    with col2:
         st.markdown("""
             <div class="contact-card">
                 <div class="contact-icon">💼</div>
@@ -92,7 +92,16 @@ def contact():
             </div>
         """, unsafe_allow_html=True)
 
-    # Phần Vị trí được làm to và nổi bật hơn
+    with col3:
+        st.markdown("""
+            <div class="contact-card">
+                <div class="contact-icon">📞</div>
+                <div class="contact-label">Phone Number</div>
+                <a class="contact-link" href="tel:0923132208">0923.132.208</a>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Phần Vị trí
     st.markdown("""
         <div class="location-section">
             <div style="font-size: 2rem; margin-bottom: 10px;">📍</div>

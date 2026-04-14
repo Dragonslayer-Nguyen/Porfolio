@@ -177,3 +177,36 @@ def projects():
             * **Data Integrity:** Eliminated human transcription errors, ensuring high-fidelity data across the logistics supply chain.
             """)
             st.caption("Tech Stack: Gemini Vision API, OCR, Python Automation, Logistics Workflow")
+        with tab3:
+
+            st.divider()
+
+            st.subheader("👗 TrendPulse AI: Automated Fashion Intelligence & Market Research")
+
+            col_r1, col_r2 = st.columns([1, 1.2])
+            with col_r1:
+                st.markdown("""
+                <div style="background-color: #f0fdf4; padding: 20px; border-radius: 12px; border-left: 5px solid #10b981;">
+                    <h4 style="margin:0; color:#065f46; font-size: 0.9em; letter-spacing: 1px;">ARCHITECTURAL ROLE</h4>
+                    <p style="color:#10b981; font-weight:800; font-size:1.2em; margin:5px 0;">Intelligence Orchestrator</p>
+                    <p style="color:#64748b; font-size:0.85em;">Built a 10x faster market research pipeline compared to manual analysis.</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col_r2:
+                st.markdown("""
+                **Description:** Engineered a sophisticated multi-agent automation system designed to conduct deep-dive market research in the fashion and fitness-wear industry.
+
+                **Technical Architecture:**
+                * **Multi-API Orchestration:** Developed a hybrid pipeline integrating **Perplexity API** for real-time web-scale discovery and **Gemini 3.1 Flash** for high-speed synthesis and reasoning.
+                * **Targeted Web Scraping:** Built custom scrapers to harvest granular product data (descriptions, SKUs, and pricing) from leading global and South Korean fitness brands.
+                * **Cognitive Synthesis Engine:** Engineered prompts to transform raw unstructured data into high-value strategic reports covering:
+                    * **Design & Silhouette Trends:** Identifying emerging cuts and styles.
+                    * **Color & Material Analytics:** Tracking trending palettes and fabric innovations (e.g., sustainable or performance materials).
+                    * **Dynamic Pricing Strategy:** Analyzing competitor price points to suggest optimal market positioning.
+
+                **Outcome:**
+                * Delivers a comprehensive, data-backed **Fashion Trend Report** in minutes, enabling rapid response to market shifts.
+                * Eliminated the subjectivity of manual research by grounding insights in real-time global data.
+                """)
+                st.caption("Tech Stack: Gemini 3.1 Flash, Perplexity API, Python, Selenium, Data Orchestration")

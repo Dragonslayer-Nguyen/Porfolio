@@ -1,12 +1,10 @@
 import streamlit as st
-
-
+from sections.resume import create_final_cv
 def about():
     col1, col2 = st.columns([1.1, 2], gap="large")
 
     with col1:
         st.image("assets/avatar.jpg", use_container_width=True)
-        # Location & Contact tinh tế
         st.markdown("""
             <div style="text-align: center; color: #6b7280; font-size: 0.9em; margin-top: -10px;">
                 📍 Ho Chi Minh City, Vietnam<br>
@@ -16,7 +14,7 @@ def about():
 
     with col2:
         st.title("Nguyễn Hoàng Duy")
-        st.write("#### *Bridging the gap between AI Research and Business Intelligence*")
+        st.write("#### *Architecting Automated Data Pipelines & AI-Driven Intelligence*")
         st.divider()
 
         # Section: Education
@@ -24,71 +22,74 @@ def about():
         st.markdown("**Bachelor of IT in Artificial Intelligence** | FPT University")
         st.caption("Graduated with High Distinction • Focus on Deep Learning & Predictive Analytics")
 
-        # Section: Technical Stack
-        st.markdown("##### 🛠 Technical Stack")
+        # THAY THẾ TECH STACK THÀNH AI BUSINESS FOCUS
+        st.markdown("##### 🚀 AI Business Focus")
         st.markdown("""
         <style>
-            .stack-tag {
+            .focus-tag {
                 display: inline-block;
-                background-color: #f8fafc;
+                background-color: #eff6ff; /* Màu xanh nhẹ doanh nghiệp */
                 border-radius: 6px;
                 padding: 4px 12px;
                 margin: 3px;
-                font-family: 'Source Code Pro', monospace;
+                font-family: 'Inter', sans-serif;
                 font-size: 0.85em;
                 font-weight: 600;
-                color: #1e293b;
-                border: 1px solid #e2e8f0;
+                color: #1e40af;
+                border: 1px solid #bfdbfe;
                 box-shadow: 1px 1px 2px rgba(0,0,0,0.05);
             }
         </style>
         <div>
-            <span class="stack-tag">Python (Expert)</span> <span class="stack-tag">Gemini API</span>
-            <span class="stack-tag">LangChain</span> <span class="stack-tag">TensorFlow</span>
-            <span class="stack-tag">PyTorch</span> <span class="stack-tag">SQL</span>
-            <span class="stack-tag">Streamlit</span> <span class="stack-tag">Power BI</span>
+            <span class="focus-tag">Cost Efficiency via Automation</span>
+            <span class="focus-tag">Competitive Market Intelligence</span>
+            <span class="focus-tag">Scalable Data Pipelines</span>
+            <span class="focus-tag">LLM-Powered Decision Support</span>
+            <span class="focus-tag">Actionable BI Insights</span>
         </div>
         """, unsafe_allow_html=True)
 
         st.write("")
 
-        # Section: Core Competencies (Tái cấu trúc để Pro hơn)
+        # Section: Core Competencies (Giữ nguyên cấu trúc đã tối ưu cho Automation)
         st.markdown("##### 🧠 Core Competencies")
-
         c1, c2, c3 = st.columns(3)
 
         with c1:
             st.info("""
-            **AI & Computer Vision**
-            - **Object Detection:** YOLOv8+
-            - **Biometrics:** Lip-Net, Mediapipe
-            - **Processing:** OpenCV Advanced
+            **Scraping & Automation**
+            - **End-to-End Crawling:** Automated data harvesting.
+            - **Market Intelligence:** Tracking trends & competitors.
+            - **n8n Workflows:** Dynamic business logic.
             """)
 
         with c2:
             st.success("""
-            **Data Engineering**
-            - **Analysis:** Statistical Modeling
-            - **Finance:** Predictive Valuation
-            - **BI:** Power Query & DAX
+            **AI & LLM Solutions**
+            - **Agentic Workflows:** Multi-step AI agents.
+            - **RAG Architect:** Smart document processing.
+            - **Precision Extraction:** Data from unstructured sources.
             """)
 
         with c3:
             st.warning("""
-            **Agents & Automation**
-            - **Virtual Assistant:** Gemini API
-            - **RAG System:** PDF Data Extraction
-            - **Workflow:** Automated Profiling
+            **Business Intelligence**
+            - **Data Pipelines:** Clean & ready-to-use data.
+            - **Strategic Analytics:** Predictive modeling.
+            - **Real-time BI:** Streamlit & Power BI dashboards.
             """)
 
         st.write("---")
 
-        # Download Button
-        with open("assets/CV.pdf", "rb") as pdf_file:
+        try:
+            pdf_data = create_final_cv()
+
             st.download_button(
-                label="📥 DOWNLOAD MY CV",
-                data=pdf_file,
+                label="📥 DOWNLOAD MY CV (Generated PDF)",
+                data=pdf_data,  # Dữ liệu lấy trực tiếp từ hàm trong resume.py
                 file_name="NguyenHoangDuy_CV.pdf",
                 mime="application/pdf",
                 use_container_width=True,
             )
+        except Exception as e:
+            st.error(f"Could not generate PDF: {e}")

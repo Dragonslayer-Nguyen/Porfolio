@@ -65,14 +65,15 @@ def skills():
         # Nhóm 2: AI & Computer Vision
         st.markdown("""
             <div class="skill-category-card">
-                <div class="category-title">🤖 AI & Deep Learning</div>
-                <span class="skill-tag">TensorFlow</span>
-                <span class="skill-tag">PyTorch</span>
+                <div class="category-title">🤖 AI & LLM Integration</div>
+                <span class="skill-tag">LangChain</span>
                 <span class="skill-tag">OpenCV</span>
                 <span class="skill-tag">MediaPipe</span>
-                <span class="skill-tag">YOLO v8/v10</span>
-                <span class="skill-tag">Gemini API</span>
-                <span class="skill-tag">LangChain</span>
+                <span class="skill-tag">YOLO</span>
+                <span class="skill-tag">CNN</span>
+                <span class="skill-tag">Transformer</span>
+                <span class="skill-tag">TensorFlow</span>
+                <span class="skill-tag">PyTorch</span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -89,21 +90,20 @@ def skills():
             </div>
         """, unsafe_allow_html=True)
 
-        # Nhóm 4: DevOps & Deployment
+        # Nhóm 4: Automation & Scraping (Được làm mới hoàn toàn)
         st.markdown("""
             <div class="skill-category-card">
-                <div class="category-title">🚀 Deployment & Tools</div>
-                <span class="skill-tag">Streamlit</span>
-                <span class="skill-tag">Azure Cloud</span>
+                <div class="category-title">⚙️ Automation</div>
+                <span class="skill-tag">Build Automation Workflows</span>
+                <span class="skill-tag">Web Scraping</span>
+                <span class="skill-tag">Selenium / Playwright</span>
+                <span class="skill-tag">BeautifulSoup</span>
+                <span class="skill-tag">API Integration</span>
+                <span class="skill-tag">Data Extraction Pipelines</span>
                 <span class="skill-tag">Git/GitHub</span>
-                <span class="skill-tag">Docker (Basic)</span>
-                <span class="skill-tag">Automation Systems</span>
+                <span class="skill-tag">Streamlit</span>
             </div>
         """, unsafe_allow_html=True)
-
-    # Phần ghi chú thêm về ngôn ngữ (tùy chọn)
-    st.write("")
-    # Thêm phần này vào cuối hàm skills() trong file skills.py
 
     st.write("---")
     st.markdown("##### 🌐 Language Proficiency")
