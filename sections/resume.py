@@ -101,9 +101,8 @@ cv.add_page()
 cv.header_section("NGUYEN HOANG DUY", "Ho Chi Minh City  |  (+84) 923 132 208  |  220803duy@gmail.com", MY_LINK)
 
 cv.draw_section_title("Education")
-cv.add_entry("Bachelor of Science in Artificial Intelligence", "FPT University", "2022 - 2026",
-             ["GPA: 3.3/4.0 | Focus: Deep Learning, Computer Vision & Quantitative Research.",
-              "Specialized Research: Vietnamese Lip-Reading models and Market Intelligence automation."])
+cv.add_entry("Bachelor of Science in Artificial Intelligence", "FPT University", "2022 - 2024",
+             ["GPA: 3.3/4.0 | Focus: Deep Learning, Computer Vision & Data Science."])
 
 cv.draw_section_title("Technical Expertise")
 cv.add_skill_row("AI & Deep Learning", "Python (PyTorch, TensorFlow), OpenCV, MediaPipe, Langchain")
@@ -115,13 +114,16 @@ cv.add_skill_row("Finance & Assets", "Quantitative Trading, Real Estate Planning
 cv.add_skill_row("Professional", "Technical Reporting, Data Visualization, Market Research, Problem Solving")
 
 cv.draw_section_title("Awards & Honors")
-cv.add_entry("First Prize - Robocon Southern Vietnam", "Regional Championship", "2021",
+cv.add_entry("City-Level Academic & Research Excellence", "HCMC Dept. of Education and Training", "2019 - 2021",
+             ["Participated in the 5th Ho Chi Minh City April Olympic Competition (2018-2019)."
+                            ,"Second Prize - City Contest of Science and Technology (2019-2020).",
+                            "Second Prize - City Contest of Science and Technology (2020-2021)."])
+
+cv.add_entry("First Prize - Robocon Southern Vietnam", "Regional Championship", "2020",
              ["Led technical architecture for the championship-winning autonomous robotics team."])
+
 cv.add_entry("First Prize - Apps4Vsmart", "VinUniversity STEME DAY", "2020",
-             ["Designed a high-impact mobile application awarded by VinUniversity leadership."])
-cv.add_entry("Second Prize - City Science & Technology Contest", "HCMC Dept. of Education and Training", "2020-2021",
-             ["Won Second Prize in the City-level Scientific Research Competition for High School Students.",
-              "Recognized for excellence in technical innovation and scientific methodology."])
+             ["Awarded First Prize for innovative mobile application design at VinUniversity."])
 
 # --- TRANG 2: PROFESSIONAL PROJECTS ---
 cv.add_page()
@@ -131,13 +133,13 @@ cv.draw_section_title("EXPERIENCE")
 # I. AI Engineering
 cv.draw_subsection_header("I. AI Engineering & Computer Vision")
 cv.add_entry(
-    "Vietnamese Lip-Reading System", "Project Lead & Architect", "2025 - 2026",
+    "Vietnamese Lip-Reading System", "Project Lead & Architect", "2023",
     ["Developed a LipNet-based Deep Learning model for Vietnamese viseme recognition.",
      "Integrated 3D-CNN and Bi-GRU layers with CTC Loss for temporal video processing.",
      "Deployed real-time inference pipeline using Streamlit with 65% accuracy rate."]
 )
 cv.add_entry(
-    "AI Body Measurement Application", "CV Developer", "2024 - 2025",
+    "AI Body Measurement Application", "CV Developer", "2023",
     ["Orchestrated a pose-estimation pipeline using MediaPipe for contactless body measurement.",
      "Achieved 80% precision in image-to-metric transformation for fitness apparel industry.",
      "Automated data workflows to replace manual measurement processes."]
@@ -147,13 +149,13 @@ cv.add_entry(
 cv.ln(2)
 cv.draw_subsection_header("II. Data Science & Quantitative Intelligence")
 cv.add_entry(
-    "Quantitative Alpha Generation Bot", "Algorithm Developer", "2025 - 2026",
+    "Quantitative Alpha Generation Bot", "Algorithm Developer", "2024",
     ["Engineered a VN30F1M trading bot utilizing ML-based predictive signal generation.",
      "Backtested Alpha strategies on 5+ years of market data.",
      "Optimized execution latency and integrated real-time risk management protocols."]
 )
 cv.add_entry(
-    "Multivariate Production Forecasting", "Lead Data Analyst", "2025",
+    "Multivariate Production Forecasting", "Lead Data Analyst", "2024",
     ["Architected time-series models to forecast commodity production cycles and supply chain trends.",
      "Optimized model accuracy by analyzing complex feature dependencies in multivariate datasets."]
 )
@@ -162,14 +164,15 @@ cv.add_entry(
 cv.ln(2)
 cv.draw_subsection_header("III. Intelligent Automation & LLMs")
 cv.add_entry(
+    "Automated Document Processing (IDP)", "Automation Lead", "2025",
+    ["Pioneered an AWB extraction pipeline using Gemini API, reducing manual entry by 70%.",
+     "Designed robust JSON parsing workflows for seamless integration with core business systems."]
+)
+cv.add_entry(
     "Fitwear Market Intelligence Engine", "System Architect", "2026",
     ["Built a multi-agent system to automate competitor tracking for SK & VN fitness markets.",
      "Utilized Gemini API for large-scale sentiment analysis and brand ranking (Xexymix, Andar)."]
 )
-cv.add_entry(
-    "Automated Document Processing (IDP)", "Automation Lead", "2025 - 2026",
-    ["Pioneered an AWB extraction pipeline using Gemini API, reducing manual entry by 70%.",
-     "Designed robust JSON parsing workflows for seamless integration with core business systems."]
-)
+
 
 cv.output("D:\Porfolio\\assets\\CV_NguyenHoangDuy.pdf")
