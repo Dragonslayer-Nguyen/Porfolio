@@ -1,139 +1,175 @@
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
-from reportlab.lib import colors
-from reportlab.lib.units import inch
-import io
+from fpdf import FPDF, XPos, YPos
 
 
-def create_final_cv():
-    buffer = io.BytesIO()
+class ExecutiveTechCV(FPDF):
+    def __init__(self):
+        super().__init__('P', 'mm', 'A4')
+        # Bảng màu chuyên nghiệp: Deep Navy & Electric Blue
+        self.color_navy = (13, 27, 62)
+        self.color_accent = (26, 35, 126)
+        self.color_text = (30, 39, 46)
+        self.color_subtext = (70, 80, 90)
+        self.set_margins(12, 12, 12)
 
-    # Lề chuẩn quốc tế (0.5 - 0.75 inch)
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=(612, 792),
-        rightMargin=45, leftMargin=45, topMargin=40, bottomMargin=40
-    )
+    def header_section(self, name, contact_info, portfolio_url):
+        # Header Background
+        self.set_fill_color(*self.color_navy)
+        self.rect(0, 0, 210, 48, 'F')
 
-    styles = getSampleStyleSheet()
-    primary_color = colors.HexColor("#1a2a44")
+        # Name (Tăng size cực đại để tạo dấu ấn)
+        self.set_y(15)
+        self.set_font('helvetica', 'B', 32)
+        self.set_text_color(255, 255, 255)
+        self.cell(0, 15, name.upper(), align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    # --- CUSTOM STYLES ---
-    name_style = ParagraphStyle('Name', fontSize=24, fontName='Helvetica-Bold', spaceAfter=2, alignment=TA_CENTER,
-                                textColor=primary_color)
-    sub_name = ParagraphStyle('SubName', fontSize=12, fontName='Helvetica-Bold', spaceAfter=8, alignment=TA_CENTER,
-                              textColor=colors.grey)
-    contact_style = ParagraphStyle('Contact', fontSize=9.5, fontName='Helvetica', alignment=TA_CENTER, spaceAfter=12)
+        # Contact Info
+        self.set_font('helvetica', '', 11)
+        self.set_text_color(220, 220, 220)
+        full_contact = f"{contact_info}  |  "
+        text_width = self.get_string_width(full_contact + "Portfolio Website")
+        self.set_x((210 - text_width) / 2)
+        self.write(10, full_contact)
 
-    heading_style = ParagraphStyle('Heading', fontSize=12, fontName='Helvetica-Bold', textColor=primary_color,
-                                   spaceBefore=12, spaceAfter=4, textTransform='UPPERCASE')
-    job_title = ParagraphStyle('JobTitle', fontSize=10.5, fontName='Helvetica-Bold', leading=12)
-    date_style = ParagraphStyle('Date', fontSize=9.5, fontName='Helvetica-Oblique', alignment=2)
-    body_style = ParagraphStyle('Body', fontSize=10, leading=14, fontName='Helvetica', alignment=TA_JUSTIFY)
-    bullet_style = ParagraphStyle('Bullet', parent=body_style, leftIndent=12, firstLineIndent=0, spaceBefore=2)
+        # Portfolio Link
+        self.set_font('helvetica', 'B', 11)
+        self.set_text_color(100, 210, 255)
+        self.write(10, "Portfolio Website", portfolio_url)
+        self.ln(22)
 
-    content = []
+    def draw_section_title(self, title):
+        self.ln(5)
+        self.set_font('helvetica', 'B', 16)
+        self.set_text_color(*self.color_navy)
+        self.cell(0, 10, title.upper(), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    # --- 1. HEADER (Fix overlap) ---
-    content.append(Paragraph("NGUYEN HOANG DUY", name_style))
-    content.append(Spacer(1, 20))  # Tạo khoảng trống chống đè chữ
-    content.append(Paragraph("AI ARCHITECT | AUTOMATION ENGINEER", sub_name))
+        # Thanh ngăn cách thiết kế hiện đại
+        curr_y = self.get_y() - 2
+        self.set_draw_color(*self.color_accent)
+        self.set_line_width(1.2)
+        self.line(self.l_margin, curr_y, self.l_margin + 30, curr_y)
+        self.set_draw_color(200, 205, 210)
+        self.set_line_width(0.3)
+        self.line(self.l_margin + 30, curr_y, 210 - self.r_margin, curr_y)
+        self.ln(5)
 
-    contact_info = (
-        "Ho Chi Minh City, VN  •  0923132208  •  "
-        "<a href='mailto:220803duy@gmail.com' color='#1a2a44'>220803duy@gmail.com</a><br/>"
-    )
-    content.append(Paragraph(contact_info, contact_style))
+    def draw_subsection_header(self, title):
+        """Tiêu đề phụ có nền xám để phân khối nội dung Trang 2 cực kỳ rõ ràng"""
+        self.set_fill_color(242, 244, 247)
+        self.set_font('helvetica', 'B', 12)
+        self.set_text_color(*self.color_navy)
+        self.cell(0, 9, f"  {title.upper()}", fill=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.ln(3)
 
-    # --- 2. SUMMARY (Focus on Business AI) ---
-    content.append(Paragraph("Professional Summary", heading_style))
-    content.append(HRFlowable(width="100%", thickness=1, color=primary_color, spaceAfter=8))
-    content.append(Paragraph(
-        "Strategic **Automation Architect** specializing in the integration of AI-driven intelligence into core business processes. "
-        "Expert in designing **Agentic Workflows** and **RAG-based systems** that transform unstructured data into actionable assets. "
-        "Proven track record in architecting end-to-end autonomous pipelines that replace manual cognitive labor, "
-        "significantly increasing ROI through Intelligent Document Processing and Predictive Analytics.",
-        body_style
-    ))
+    def add_entry(self, title, subtitle, date, description_list):
+        # Tiêu đề & Ngày tháng (Căn lề Grid)
+        self.set_font('helvetica', 'B', 13)
+        self.set_text_color(*self.color_text)
+        self.cell(145, 7, title, new_x=XPos.RIGHT, new_y=YPos.TOP)
+        self.set_font('helvetica', 'B', 10.5)
+        self.set_text_color(*self.color_subtext)
+        self.cell(41, 7, date, align='R', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    # --- 3. TECHNICAL EXPERTISE ---
-    content.append(Paragraph("Technical Expertise", heading_style))
-    content.append(HRFlowable(width="100%", thickness=1, color=primary_color, spaceAfter=8))
+        # Vai trò/Công ty
+        self.set_font('helvetica', 'I', 11.5)
+        self.set_text_color(*self.color_accent)
+        self.cell(0, 7, subtitle, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    skills_data = [
-        [Paragraph("• <b>AI/ML:</b> LLMs (Gemini, GPT), RAG, LangChain, PyTorch", body_style),
-         Paragraph("• <b>Computer Vision:</b> YOLOv8, MediaPipe, OpenCV", body_style)],
-        [Paragraph("• <b>Automation:</b> n8n, Agentic Workflows, Playwright, Scrapy", body_style),
-         Paragraph("• <b>Data:</b> SQL, Pandas, NumPy, Vector Databases", body_style)]
-    ]
-    skills_table = Table(skills_data, colWidths=[3.4 * inch, 3.4 * inch])
-    skills_table.setStyle(TableStyle([('LEFTPADDING', (0, 0), (-1, -1), 0), ('VALIGN', (0, 0), (-1, -1), 'TOP')]))
-    content.append(skills_table)
+        # Mô tả dự án
+        self.set_font('helvetica', '', 11)
+        self.set_text_color(*self.color_text)
+        for item in description_list:
+            self.set_x(self.l_margin + 5)
+            self.multi_cell(181, 6, f"- {item}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.ln(4)
 
-    # --- 4. EXPERIENCE ---
-    content.append(Paragraph("Professional Experience", heading_style))
-    content.append(HRFlowable(width="100%", thickness=1, color=primary_color, spaceAfter=8))
-
-    # Exp 1
-    header1 = Table([[Paragraph("<b>AI Automation Architect</b> | Freelance", job_title),
-                      Paragraph("Jan 2024 – Present", date_style)]], colWidths=[5 * inch, 2.2 * inch])
-    header1.setStyle(TableStyle([('LEFTPADDING', (0, 0), (-1, -1), 0), ('BOTTOMPADDING', (0, 0), (-1, -1), 2)]))
-    content.append(header1)
-
-    bullets1 = [
-        "<b>Intelligent Document Processing (IDP):</b> Engineered a multi-stage pipeline using Gemini 1.5 Pro to extract structured data from logistics invoices with 99% accuracy.",
-        "<b>Custom AI Agents:</b> Spearheaded the development of autonomous n8n agents for lead generation and CRM synchronization, saving 40+ manual hours per week.",
-        "<b>Performance Optimization:</b> Reduced model inference latency by 30% through advanced prompt engineering and context window management."
-    ]
-    for b in bullets1: content.append(Paragraph(f"• {b}", bullet_style))
-    content.append(Spacer(1, 10))
-
-    # Exp 2
-    header2 = Table([[Paragraph("<b>Quantitative Developer</b> | FinTech", job_title),
-                      Paragraph("Jun 2023 – Dec 2023", date_style)]], colWidths=[5 * inch, 2.2 * inch])
-    header2.setStyle(TableStyle([('LEFTPADDING', (0, 0), (-1, -1), 0), ('BOTTOMPADDING', (0, 0), (-1, -1), 2)]))
-    content.append(header2)
-
-    bullets2 = [
-        "<b>Alpha Generation:</b> Architected backtesting engines for VN30F1M index using statistical modeling, delivering +30% annualized ROI.",
-        "<b>Predictive Logistics:</b> Optimized workforce allocation using XGBoost, resulting in a 15% reduction in operational overhead."
-    ]
-    for b in bullets2: content.append(Paragraph(f"• {b}", bullet_style))
-
-    # --- 5. SELECTED PROJECTS ---
-    content.append(Paragraph("Selected Projects", heading_style))
-    content.append(HRFlowable(width="100%", thickness=1, color=primary_color, spaceAfter=8))
-
-    projs = [
-        ("<b>TrendPulse AI:</b> Multi-agent system for real-time fashion market intelligence.",
-         "Gemini Flash, n8n, Selenium"),
-        ("<b>Vietnamese Lip Reading:</b> Visual speech recognition using CNN + Bi-GRU and MediaPipe.",
-         "Python, TensorFlow, MediaPipe"),
-        ("<b>Virtual Tailor:</b> Contactless body measurement system using YOLOv8-pose estimation.",
-         "OpenCV, YOLOv8, C++")
-    ]
-    for title, tech in projs:
-        content.append(Paragraph(f"{title} | <i>{tech}</i>", job_title))
-        content.append(Spacer(1, 4))
-
-    # --- 6. EDUCATION ---
-    content.append(Paragraph("Education", heading_style))
-    content.append(HRFlowable(width="100%", thickness=1, color=primary_color, spaceAfter=8))
-
-    edu = Table([[Paragraph("<b>Bachelor of IT (Artificial Intelligence)</b> - FPT University", job_title),
-                  Paragraph("Graduated 2024", date_style)]], colWidths=[5.5 * inch, 1.7 * inch])
-    edu.setStyle(TableStyle([('LEFTPADDING', (0, 0), (-1, -1), 0)]))
-    content.append(edu)
-    content.append(Paragraph("• Graduated with High Distinction; GPA: 8.1/10", bullet_style))
-
-    doc.build(content)
-    buffer.seek(0)
-    return buffer
+    def add_skill_row(self, label, skills):
+        self.set_font('helvetica', 'B', 11.5)
+        self.set_text_color(*self.color_navy)
+        self.cell(42, 8, f"{label}:", new_x=XPos.RIGHT, new_y=YPos.TOP)
+        self.set_font('helvetica', '', 11.5)
+        self.set_text_color(*self.color_text)
+        self.multi_cell(0, 8, skills, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
 
-if __name__ == "__main__":
-    pdf = create_final_cv()
-    with open("NguyenHoangDuy_Architect_CV.pdf", "wb") as f:
-        f.write(pdf.getbuffer())
-    print("✅ CV đã được tối ưu chuẩn quốc tế!")
+# --- KHỞI TẠO VÀ XUẤT FILE ---
+cv = ExecutiveTechCV()
+cv.set_auto_page_break(auto=True, margin=15)
+MY_LINK = "https://duy-nguyen-portfolio.streamlit.app/"
+
+# --- TRANG 1: PROFILE & CORE SKILLS ---
+cv.add_page()
+cv.header_section("NGUYEN HOANG DUY", "Ho Chi Minh City  |  (+84) 923 132 208  |  220803duy@gmail.com", MY_LINK)
+
+cv.draw_section_title("Education")
+cv.add_entry("Bachelor of Science in Artificial Intelligence", "FPT University", "2022 - 2026",
+             ["GPA: 3.3/4.0 | Focus: Deep Learning, Computer Vision & Quantitative Research.",
+              "Specialized Research: Vietnamese Lip-Reading models and Market Intelligence automation."])
+
+cv.draw_section_title("Technical Expertise")
+cv.add_skill_row("AI & Deep Learning", "Python (PyTorch, TensorFlow), OpenCV, MediaPipe, Langchain")
+cv.add_skill_row("Data Engineering", "SQL, Pandas, NumPy, Tableau, Technical Indicators, Time-series")
+cv.add_skill_row("Intelligent Systems", "LLM Orchestration (API AGENT), Multi-Agent Search, Automation")
+
+cv.draw_section_title("Domain & Soft Skills")
+cv.add_skill_row("Finance & Assets", "Quantitative Trading, Stock Market Analysis, Real Estate Planning")
+cv.add_skill_row("Professional", "Technical Reporting, Data Visualization, Market Research, Problem Solving")
+
+cv.draw_section_title("Awards & Honors")
+cv.add_entry("First Prize - Robocon Southern Vietnam", "Regional Championship", "2021",
+             ["Led technical architecture for the championship-winning autonomous robotics team."])
+cv.add_entry("First Prize - Apps4Vsmart", "VinUniversity STEME DAY", "2020",
+             ["Designed a high-impact mobile application awarded by VinUniversity leadership."])
+cv.add_entry("Second Prize - City Science & Technology Contest", "HCMC Dept. of Education and Training", "2020-2021",
+             ["Won Second Prize in the City-level Scientific Research Competition for High School Students.",
+              "Recognized for excellence in technical innovation and scientific methodology."])
+
+# --- TRANG 2: PROFESSIONAL PROJECTS ---
+cv.add_page()
+cv.set_y(15)
+cv.draw_section_title("EXPERIENCE")
+
+# I. AI Engineering
+cv.draw_subsection_header("I. AI Engineering & Computer Vision")
+cv.add_entry(
+    "Vietnamese Lip-Reading System", "Project Lead & Architect", "2025 - 2026",
+    ["Developed a LipNet-based Deep Learning model for Vietnamese viseme recognition.",
+     "Integrated 3D-CNN and Bi-GRU layers with CTC Loss for temporal video processing.",
+     "Deployed real-time inference pipeline using Streamlit with 65% accuracy rate."]
+)
+cv.add_entry(
+    "AI Body Measurement Application", "CV Developer", "2024 - 2025",
+    ["Orchestrated a pose-estimation pipeline using MediaPipe for contactless body measurement.",
+     "Achieved 80% precision in image-to-metric transformation for fitness apparel industry.",
+     "Automated data workflows to replace manual measurement processes."]
+)
+
+# II. Data Intelligence
+cv.ln(2)
+cv.draw_subsection_header("II. Data Science & Quantitative Intelligence")
+cv.add_entry(
+    "Quantitative Alpha Generation Bot", "Algorithm Developer", "2025 - 2026",
+    ["Engineered a VN30F1M trading bot utilizing ML-based predictive signal generation.",
+     "Backtested Alpha strategies on 5+ years of market data.",
+     "Optimized execution latency and integrated real-time risk management protocols."]
+)
+cv.add_entry(
+    "Multivariate Production Forecasting", "Lead Data Analyst", "2025",
+    ["Architected time-series models to forecast commodity production cycles and supply chain trends.",
+     "Optimized model accuracy by analyzing complex feature dependencies in multivariate datasets."]
+)
+
+# III. Automation
+cv.ln(2)
+cv.draw_subsection_header("III. Intelligent Automation & LLMs")
+cv.add_entry(
+    "Fitwear Market Intelligence Engine", "System Architect", "2026",
+    ["Built a multi-agent system to automate competitor tracking for SK & VN fitness markets.",
+     "Utilized Gemini API for large-scale sentiment analysis and brand ranking (Xexymix, Andar)."]
+)
+cv.add_entry(
+    "Automated Document Processing (IDP)", "Automation Lead", "2025 - 2026",
+    ["Pioneered an AWB extraction pipeline using Gemini API, reducing manual entry by 70%.",
+     "Designed robust JSON parsing workflows for seamless integration with core business systems."]
+)
+
+cv.output("D:\Porfolio\\assets\\CV_NguyenHoangDuy.pdf")

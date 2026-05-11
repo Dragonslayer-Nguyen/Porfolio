@@ -1,5 +1,5 @@
 import streamlit as st
-from sections.resume import create_final_cv
+from pathlib import Path
 def about():
     col1, col2 = st.columns([1.1, 2], gap="large")
 
@@ -82,14 +82,25 @@ def about():
         st.write("---")
 
         try:
-            pdf_data = create_final_cv()
+            current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 
-            st.download_button(
-                label="📥 DOWNLOAD MY CV (Generated PDF)",
-                data=pdf_data,  # Dữ liệu lấy trực tiếp từ hàm trong resume.py
-                file_name="NguyenHoangDuy_CV.pdf",
-                mime="application/pdf",
-                use_container_width=True,
-            )
+            # THÊM .pdf VÀO ĐÂY
+            pdf_path = current_dir / "assets" / "CV_NguyenHoangDuy.pdf"
+
+            if pdf_path.exists():
+                with open(pdf_path, "rb") as pdf_file:
+                    pdf_data = pdf_file.read()
+
+                st.download_button(
+                    label="📥 DOWNLOAD MY CV",
+                    data=pdf_data,
+                    file_name="CV_NguyenHoangDuy.pdf",  # Nên có đuôi để máy người dùng hiểu là file PDF
+                    mime="application/pdf",
+                    use_container_width=True,
+                )
+            else:
+                # Nếu vẫn báo lỗi, dòng này sẽ in ra đường dẫn tuyệt đối để bạn check lại
+                st.error(f"File không tìm thấy tại: {pdf_path.absolute()}")
+
         except Exception as e:
-            st.error(f"Could not generate PDF: {e}")
+            st.error(f"Đã xảy ra lỗi: {e}")
