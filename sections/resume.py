@@ -111,7 +111,7 @@ cv.add_skill_row("Data Engineering", "SQL, Pandas, NumPy, Tableau, Technical Ind
 cv.add_skill_row("Intelligent Systems", "LLM Orchestration (API AGENT), Multi-Agent Search, Automation")
 
 cv.draw_section_title("Domain & Soft Skills")
-cv.add_skill_row("Finance & Assets", "Quantitative Trading, Stock Market Analysis, Real Estate Planning")
+cv.add_skill_row("Finance & Assets", "Quantitative Trading, Real Estate Planning, Aircargo Warehouse Operations")
 cv.add_skill_row("Professional", "Technical Reporting, Data Visualization, Market Research, Problem Solving")
 
 cv.draw_section_title("Awards & Honors")
